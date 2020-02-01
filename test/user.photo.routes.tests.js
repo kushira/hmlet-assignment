@@ -15,6 +15,7 @@ describe('user route tests', function () {
             .attach('photo', './test/test-image.jpg');
         res.status.should.equal(200);
         res.body.id.should.not.be.undefined();
+        res.body.fileLocation.should.not.be.undefined();
     });
 
 });

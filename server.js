@@ -1,5 +1,6 @@
 const Koa = require('koa'),
     Router = require('@koa/router'),
+    serve = require('koa-static'),
     mongoose = require('mongoose');
 
 //TODO Configuration
@@ -25,6 +26,8 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(UserRoutes.routes());
 app.use(UserRoutes.allowedMethods());
+
+app.use(serve('./store'));
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx);
