@@ -1,5 +1,5 @@
 const {isValidSortOrder, ASC} = require('../domain/sort.order.constant'),
-    DataHelper = require('../dal/DataHelper'),
+    DataHelper = require('../dal/PhotoDataHelper'),
     {EXTENSIONS} = require('../util/file.type.util'),
     {isValidType, POST} = require('../domain/photo.type.constant'),
     {moveFile} = require('../util/file.operation.util'),
@@ -35,7 +35,7 @@ const savePhoto = async ({userId, caption, type, photoName, fileLocation, fileTy
     }
 };
 
-const getPhotos = async ({userId, type = {}, sortBy = 'publishedDate', sortOrder = ASC}) => {
+const getPhotos = async ({userId, type, captionTags, sortBy = 'publishedDate', sortOrder = ASC}) => {
     validatePhotoType(type);
     if (!SORT_FIELDS.includes(sortBy)) {
         throw new Error('Unsupported sort by field');
@@ -44,7 +44,15 @@ const getPhotos = async ({userId, type = {}, sortBy = 'publishedDate', sortOrder
         throw new Error('Invalid sort order');
     }
 
-    const photos = await UserPhotoDataHelper.find({filter: {userId}, sortBy, sortOrder});
+    const filter = {userId};
+    if (type) {
+        filter.type = type;
+    }
+    if (captionTags) {
+        filter.captionTags = captionTags;
+    }
+
+    const photos = await UserPhotoDataHelper.find({filter, sortBy, sortOrder});
     return photos.map(photo => extractPhotoData(photo));
 };
 

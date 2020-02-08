@@ -51,13 +51,12 @@ router.get('/users/:userId/photos', async ctx => {
     const {query} = ctx.request;
     const userId = ctx.userId;
 
-    const type = query.type || POST;
-
     ctx.body = await UserPhotoApi.getPhotos({
         userId: userId,
         sortBy: query['sort-by'],
         sortOrder: query['sort-order'],
-        type
+        type: query.type,
+        captionTags: query.tags
     });
 
 });

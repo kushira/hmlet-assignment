@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const {ASC, DESC} = require('../domain/sort.order.constant');
+const {DESC} = require('../domain/sort.order.constant');
 
 class DataHelper {
 
-    #model;
+    model;
 
     static generateSortString(sortBy, sortOrder) {
         if (sortOrder === DESC) {
@@ -15,33 +15,33 @@ class DataHelper {
     }
 
     constructor(modelName) {
-        this.#model = mongoose.model(modelName);
-        if (!this.#model) {
+        this.model = mongoose.model(modelName);
+        if (!this.model) {
             throw new Error(`Model ${modelName} not found`);
         }
     }
 
     save(data) {
-        const modelData = new this.#model(data);
+        const modelData = new this.model(data);
         return modelData.save();
     }
 
     find({filter, sortBy, sortOrder}) {
         //TODO leverage lean operation
-        return this.#model.find(filter).sort(DataHelper.generateSortString(sortBy, sortOrder)).exec();
+        return this.model.find(filter).sort(DataHelper.generateSortString(sortBy, sortOrder)).exec();
     }
 
     findById(id) {
         //TODO leverage lean operation
-        return this.#model.findById(id).exec();
+        return this.model.findById(id).exec();
     }
 
     delateById(id) {
-        return this.#model.findByIdAndDelete(id);
+        return this.model.findByIdAndDelete(id);
     }
 
     updateById(id, fields) {
-        return this.#model.findByIdAndUpdate(id, {$set: {...fields}})
+        return this.model.findByIdAndUpdate(id, {$set: {...fields}})
     }
 
 }

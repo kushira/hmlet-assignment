@@ -81,6 +81,17 @@ describe('user route tests', function () {
         res.body.captionTags.should.be.an.Array().and.have.length(1);
     });
 
+    it('should search photos by tag', async function () {
+        const userId = UUID.v4();
+        let res = await uploadPhoto(userId, 'John #Smith is #fun', 'post');
+        res.status.should.equal(200);
+        res = await uploadPhoto(userId, 'Jane #Smith is #bad', 'post');
+        res.status.should.equal(200);
+        res = await request
+            .get('/users/'.concat(userId).concat('/photos?tags=Smith&tags=bad'));
+        res.body.should.be.an.Array().and.have.length(1);
+    });
+
     function uploadPhoto(userId, caption, type) {
         return request
             .post('/users/'.concat(userId).concat('/photos'))

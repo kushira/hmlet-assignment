@@ -11,10 +11,10 @@ mongoose.connect('mongodb://localhost:27017/hmlet', {
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false
-})    .catch(error => {
-        console.log(error);
-        process.exit(-1);
-    });
+}).catch(error => {
+    console.log(error);
+    process.exit(-1);
+});
 
 //TODO Logger
 const app = new Koa(),
