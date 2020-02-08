@@ -45,17 +45,19 @@ const getPhotos = async ({userId, type = {}, sortBy = 'publishedDate', sortOrder
     }
 
     const photos = await UserPhotoDataHelper.find({filter: {userId}, sortBy, sortOrder});
-    return photos.map(photo => {
-        return {
-            id: photo.id,
-            fileLocation: generateFilePath(photo.userId, photo.photoId, photo.fileType),
-            caption: photo.caption,
-            type: photo.type,
-            publishedDate: photo.publishedDate,
-            photoName: photo.photoName,
-            captionTags: photo.captionTags
-        }
-    })
+    return photos.map(photo => extractPhotoData(photo));
+};
+
+const deletePhoto = id => UserPhotoDataHelper.delateById(id);
+
+const updateCaption = async ({photoId, caption}) => {
+    await UserPhotoDataHelper.updateById(photoId, {
+        caption,
+        captionTags: getCaptionTags(caption)
+    });
+
+    const photo = await UserPhotoDataHelper.findById(photoId);
+    return extractPhotoData(photo);
 };
 
 function validatePhotoType(type) {
@@ -63,6 +65,18 @@ function validatePhotoType(type) {
         if (!isValidType(type)) {
             throw new Error('Invalid photo type');
         }
+    }
+}
+
+function extractPhotoData(photo) {
+    return {
+        id: photo.id,
+        fileLocation: generateFilePath(photo.userId, photo.photoId, photo.fileType),
+        caption: photo.caption,
+        type: photo.type,
+        publishedDate: photo.publishedDate,
+        photoName: photo.photoName,
+        captionTags: photo.captionTags
     }
 }
 
@@ -85,6 +99,8 @@ function getCaptionTags(caption) {
 
 module.exports = {
     SORT_FIELDS,
+    deletePhoto,
     getPhotos,
-    savePhoto
+    savePhoto,
+    updateCaption
 };

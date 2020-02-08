@@ -59,6 +59,28 @@ describe('user route tests', function () {
         res.body[0].publishedDate.should.be.above(res.body[1].publishedDate);
     });
 
+    it('should delete photos by Id', async function () {
+        const userId = UUID.v4();
+        let res = await uploadPhoto(userId, 'John #Smith is #fun', 'post');
+        res.status.should.equal(200);
+        const id = res.body.id;
+        res = await request
+            .delete('/photos/'.concat(id));
+        res.status.should.equal(204);
+    });
+
+    it('should update caption by Id', async function () {
+        const userId = UUID.v4();
+        let res = await uploadPhoto(userId, 'John #Smith is #fun', 'post');
+        res.status.should.equal(200);
+        const id = res.body.id;
+        res = await request
+            .patch('/photos/'.concat(id))
+            .send({caption: 'Jenny is #bored'});
+        res.status.should.equal(200);
+        res.body.captionTags.should.be.an.Array().and.have.length(1);
+    });
+
     function uploadPhoto(userId, caption, type) {
         return request
             .post('/users/'.concat(userId).concat('/photos'))

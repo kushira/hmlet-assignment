@@ -1,8 +1,7 @@
-const Router = require('@koa/router'),
-    multer = require('@koa/multer');
+const multer = require('@koa/multer'),
+    Router = require('@koa/router');
 
-const {ASC} = require('../domain/sort.order.constant'),
-    {isValidType, POST} = require('../domain/photo.type.constant'),
+const {POST} = require('../domain/photo.type.constant'),
     {MIME_TYPES} = require('../util/file.type.util'),
     UserPhotoApi = require('../api/user.photo.api');
 
@@ -25,6 +24,11 @@ router.param('userId', (userId, ctx, next) => {
     return next();
 });
 
+router.param('photoId', (photoId, ctx, next) => {
+    ctx.photoId = photoId;
+    return next();
+});
+
 router.post('/users/:userId/photos', upload.single('photo'), async ctx => {
     const {file, body} = ctx.request;
     const userId = ctx.userId;
@@ -44,7 +48,7 @@ router.post('/users/:userId/photos', upload.single('photo'), async ctx => {
 });
 
 router.get('/users/:userId/photos', async ctx => {
-    const {body, query} = ctx.request;
+    const {query} = ctx.request;
     const userId = ctx.userId;
 
     const type = query.type || POST;
@@ -56,6 +60,23 @@ router.get('/users/:userId/photos', async ctx => {
         type
     });
 
+});
+
+router.del('/photos/:photoId', async ctx => {
+    const photoId = ctx.photoId;
+    await UserPhotoApi.deletePhoto(photoId);
+    ctx.response.status = 204;
+});
+
+router.patch('/photos/:photoId', async ctx => {
+    const {caption} = ctx.request.body;
+
+    if (!caption) {
+        throw new Error('Caption cannot be null');
+    }
+
+    const photoId = ctx.photoId;
+    ctx.body = await UserPhotoApi.updateCaption({photoId, caption});
 });
 
 module.exports = router;
