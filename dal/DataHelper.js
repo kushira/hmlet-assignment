@@ -8,10 +8,10 @@ class DataHelper {
 
     static generateSortString(sortBy, sortOrder) {
         if (sortOrder === DESC) {
-            return sortBy
-        } else {
             return '-'.concat(sortBy);
         }
+
+        return sortBy;
     }
 
     constructor(modelName) {
