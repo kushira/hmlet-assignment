@@ -4,6 +4,7 @@ const Koa = require('koa'),
     mongoose = require('mongoose');
 
 //TODO Configuration
+//TODO Diable auto index in production
 mongoose.connect('mongodb://localhost:27017/hmlet', {useNewUrlParser: true, useUnifiedTopology: true})
     .catch(error => {
         console.log(error);

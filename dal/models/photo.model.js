@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+const {EXTENSIONS} = require('../../util/file.type.util');
 const {POST, DRAFT} = require('../../domain/photo.type.constant');
 
 const Schema = mongoose.Schema;
@@ -16,9 +17,17 @@ const PhotoSchema = new Schema({
     caption: {
         type: String,
     },
+    captionTags: [{
+        type: String,
+    }],
     type: {
         type: String,
         enum: [POST, DRAFT],
+        required: true
+    },
+    fileType: {
+        type: String,
+        enum: Object.values(EXTENSIONS),
         required: true
     },
     publishedDate: {
@@ -29,5 +38,7 @@ const PhotoSchema = new Schema({
         type: String
     },
 });
+
+PhotoSchema.index({captionTags: 1});
 
 module.exports = PhotoSchema;

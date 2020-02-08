@@ -1,8 +1,18 @@
 const mongoose = require('mongoose');
 
+const {ASC, DESC} = require('../domain/sort.order.constant');
+
 class DataHelper {
 
     #model;
+
+    static generateSortString(sortBy, sortOrder) {
+        if (sortOrder === DESC) {
+            return sortBy
+        } else {
+            return '-'.concat(sortBy);
+        }
+    }
 
     constructor(modelName) {
         this.#model = mongoose.model(modelName);
@@ -15,6 +25,11 @@ class DataHelper {
         const modelData = new this.#model(data);
         return modelData.save();
     }
+
+    find({filter, sortBy, sortOrder}) {
+        return this.#model.find(filter).sort(DataHelper.generateSortString(sortBy, sortOrder)).exec();
+    }
+
 }
 
 module.exports = DataHelper;

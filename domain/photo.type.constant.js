@@ -1,4 +1,6 @@
-const DRAFT = 'DRAFT';
-const POST = 'POST';
+const DRAFT = 'draft';
+const POST = 'post';
 
-module.exports = {DRAFT, POST};
+const isValidType = type => [DRAFT, POST].includes(type);
+
+module.exports = {DRAFT, POST, isValidType};
