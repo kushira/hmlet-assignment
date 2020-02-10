@@ -1,7 +1,8 @@
-const {isValidSortOrder, ASC} = require('../domain/sort.order.constant'),
+const {FILE_PATH} = require('../config'),
     DataHelper = require('../dal/PhotoDataHelper'),
     {EXTENSIONS} = require('../util/file.type.util'),
-    {isValidType, POST} = require('../domain/photo.type.constant'),
+    {isValidSortOrder, ASC} = require('../domain/sort.order.constant'),
+    {isValidType} = require('../domain/photo.type.constant'),
     {moveFile} = require('../util/file.operation.util'),
     UUID = require('uuid');
 
@@ -9,14 +10,15 @@ const UserPhotoDataHelper = new DataHelper('UserPhoto');
 
 const CAPTION_REGEX = /#([a-zA-Z0-9-]*)/g;
 const SORT_FIELDS = ['publishedDate'];
+const PARENT_PATH = 'photos';
 
 const savePhoto = async ({userId, caption, type, photoName, fileLocation, fileType}) => {
     validatePhotoType(type);
 
     const photoId = UUID.v4();
     const fileExtension = EXTENSIONS[fileType];
-    const newFileLocation = generateFilePath(userId, photoId, fileExtension);
-    await moveFile(fileLocation, `store/${newFileLocation}`);
+    const newFileLocation = generateFilePath(userId, photoId, type, fileExtension);
+    await moveFile(fileLocation, `${FILE_PATH}${newFileLocation}`);
     const userPhoto = {
         photoId,
         userId,
@@ -79,7 +81,7 @@ function validatePhotoType(type) {
 function extractPhotoData(photo) {
     return {
         id: photo.id,
-        fileLocation: generateFilePath(photo.userId, photo.photoId, photo.fileType),
+        fileLocation: generateFilePath(photo.userId, photo.photoId, photo.type, photo.fileType),
         caption: photo.caption,
         type: photo.type,
         publishedDate: photo.publishedDate,
@@ -88,9 +90,8 @@ function extractPhotoData(photo) {
     }
 }
 
-function generateFilePath(userId, photoId, fileType) {
-    //TODO Configurations
-    return `photos/${userId}/${photoId}.${fileType}`;
+function generateFilePath(userId, photoId, type, fileType) {
+    return `/${PARENT_PATH}/${type}/${userId}/${photoId}.${fileType}`;
 }
 
 function getCaptionTags(caption) {

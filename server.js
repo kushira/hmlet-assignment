@@ -1,12 +1,14 @@
 const bodyParser = require('koa-bodyparser'),
+    jwt = require('koa-jwt'),
     Koa = require('koa'),
     Router = require('@koa/router'),
     serve = require('koa-static'),
     mongoose = require('mongoose');
 
-//TODO Configuration
+const {DB_URL, JWT_SHARED_SECRET, PORT} = require('./config');
+
 //TODO Disable auto index in production
-mongoose.connect('mongodb://localhost:27017/hmlet', {
+mongoose.connect(DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -28,6 +30,8 @@ router.get('/', ctx => {
     ctx.body = {message: 'success'};
 });
 
+app.use(jwt({secret: JWT_SHARED_SECRET}));
+
 app.use(bodyParser());
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -40,7 +44,8 @@ app.on('error', (err, ctx) => {
     console.error('server error', err, ctx);
 });
 
-//TODO Configuration
-const server = app.listen(3000);
+const server = app.listen(PORT);
+
+console.log(`Application is running on ${PORT}`);
 
 module.exports = server;
