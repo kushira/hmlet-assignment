@@ -4,6 +4,7 @@ const {FILE_PATH} = require('../config'),
     {isValidSortOrder, ASC} = require('../domain/sort.order.constant'),
     {isValidType} = require('../domain/photo.type.constant'),
     {moveFile} = require('../util/file.operation.util'),
+    UserError = require('../error/UserError'),
     UUID = require('uuid');
 
 const UserPhotoDataHelper = new DataHelper('UserPhoto');
@@ -40,10 +41,10 @@ const savePhoto = async ({userId, caption, type, photoName, fileLocation, fileTy
 const getPhotos = async ({userId, type, captionTags, sortBy = 'publishedDate', sortOrder = ASC}) => {
     validatePhotoType(type);
     if (!SORT_FIELDS.includes(sortBy)) {
-        throw new Error('Unsupported sort by field');
+        throw new UserError('Unsupported sort by field');
     }
     if (!isValidSortOrder(sortOrder)) {
-        throw new Error('Invalid sort order');
+        throw new UserError('Invalid sort order');
     }
 
     const filter = {userId};
@@ -73,7 +74,7 @@ const updateCaption = async ({photoId, caption}) => {
 function validatePhotoType(type) {
     if (type) {
         if (!isValidType(type)) {
-            throw new Error('Invalid photo type');
+            throw new UserError('Invalid photo type');
         }
     }
 }

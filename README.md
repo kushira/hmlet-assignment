@@ -39,4 +39,4 @@ at this point it serves the purpose of sys to sys authentication only.
 - No Logger
 - Mongoose auto indexing should be disabled in production.
 - When fetching data from DB, Mongoose lean operation should be used where applicable.
-- 
+- Complete the error handling.

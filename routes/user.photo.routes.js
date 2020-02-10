@@ -3,6 +3,7 @@ const multer = require('@koa/multer'),
 
 const {FILE_UPLOAD_PATH} = require('../config'),
     {MIME_TYPES} = require('../util/file.type.util'),
+    UserError = '../error/UserError',
     UserPhotoApi = require('../api/user.photo.api');
 
 const upload = multer({
@@ -34,7 +35,7 @@ router.post('/users/:userId/photos', upload.single('photo'), async ctx => {
     const userId = ctx.userId;
 
     if (!file || !body.caption || !body.type) {
-        throw new Error('File or caption cannot be null');
+        throw new UserError('File or caption cannot be null');
     }
 
     ctx.body = await UserPhotoApi.savePhoto({
@@ -71,7 +72,7 @@ router.patch('/photos/:photoId', async ctx => {
     const {caption} = ctx.request.body;
 
     if (!caption) {
-        throw new Error('Caption cannot be null');
+        throw new UserError('Caption cannot be null');
     }
 
     const photoId = ctx.photoId;
