@@ -5,7 +5,7 @@ const bodyParser = require('koa-bodyparser'),
     serve = require('koa-static'),
     mongoose = require('mongoose');
 
-const {DB_URL, JWT_SHARED_SECRET, PORT} = require('./config');
+const {DB_URL, FILE_PATH, JWT_SHARED_SECRET, PORT} = require('./config');
 
 //TODO Disable auto index in production
 mongoose.connect(DB_URL, {
@@ -38,7 +38,7 @@ app.use(router.allowedMethods());
 app.use(UserRoutes.routes());
 app.use(UserRoutes.allowedMethods());
 
-app.use(serve('./store'));
+app.use(serve(`./${FILE_PATH}`));
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx);

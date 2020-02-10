@@ -1,12 +1,12 @@
 const multer = require('@koa/multer'),
     Router = require('@koa/router');
 
-const {POST} = require('../domain/photo.type.constant'),
+const {FILE_UPLOAD_PATH} = require('../config'),
     {MIME_TYPES} = require('../util/file.type.util'),
     UserPhotoApi = require('../api/user.photo.api');
 
 const upload = multer({
-    dest: 'uploads', fileFilter: function (req, file, next) {
+    dest: FILE_UPLOAD_PATH, fileFilter: function (req, file, next) {
         const {mimetype} = file;
         //TODO Configurations
         if (!MIME_TYPES.includes(mimetype)) {
